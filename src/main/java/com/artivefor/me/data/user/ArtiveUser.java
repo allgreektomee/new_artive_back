@@ -38,16 +38,21 @@ public class ArtiveUser extends BaseTimeEntity {
     @Column(nullable = false)
     private Role role = Role.USER;
 
+    // UserProfile 쪽에 @MapsId가 있으므로 이 연결이 중요합니다.
     // ArtiveUser가 지워지면 연결된 Profile도 함께 지워지도록 설정 (Cascade)
+    @Setter
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
     private UserProfile profile;
 
+    @Setter
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
     private UserSettings settings;
 
     @Builder.Default // ✅ 추가: 빌더로 생성 시 리스트가 null이 되지 않게 방지
     @OneToMany(mappedBy = "author", cascade = CascadeType.ALL)
     private List<Artwork> artworks = new ArrayList<>();
+
+
 }
 
 /*

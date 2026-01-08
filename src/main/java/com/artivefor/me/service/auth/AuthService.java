@@ -1,8 +1,12 @@
 package com.artivefor.me.service.auth;
 
 import com.artivefor.me.data.user.ArtiveUser;
+import com.artivefor.me.data.user.Role;
+import com.artivefor.me.data.user.UserProfile;
+import com.artivefor.me.data.user.UserSettings;
 import com.artivefor.me.dto.auth.AuthRequest;
 import com.artivefor.me.repository.user.ArtiveUserRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -49,17 +53,31 @@ public class AuthService {
         return false;
     }
 
-
+    @Transactional
     public void signUp(AuthRequest.SignUp request) {
-        // 비밀번호 암호화해서 저장
-        String encodedPassword = passwordEncoder.encode(request.getPassword());
-
+        // 1. 유저 본체 생성
         ArtiveUser user = ArtiveUser.builder()
                 .email(request.getEmail())
-                .password(encodedPassword) // 암호화된 비밀번호 저장
+                .password(passwordEncoder.encode(request.getPassword()))
+                .slug(request.getNickname()) // 닉네임을 초기 슬러그로 사용
+                .role(Role.USER)
                 .build();
 
-        userRepository.save(user);
+        // 관계 맺기
+        // 2. 프로필 생성 (빌더 사용)
+        UserProfile profile = UserProfile.builder()
+                .user(user)
+                .build();
+        user.setProfile(profile);
+
+        // 3. 설정 생성 (빌더 사용)
+        UserSettings settings = UserSettings.builder()
+                .user(user)
+                .build();
+        user.setSettings(settings);
+
+        // 이 부분은 컨트롤러 작업 전, 서비스 단에서 미리 객체를 생성해 두는 로직입니다.
+        userRepository.save(user); // CascadeType.ALL에 의해 연관된 객체들이 함께 저장됩니다.
     }
 
     public ArtiveUser login(String email, String password) {
@@ -74,4 +92,6 @@ public class AuthService {
 
         return user;
     }
+
+
 }

@@ -2,14 +2,16 @@ package com.artivefor.me.data.user;
 
 import com.artivefor.me.data.common.LanguageCode;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.HashMap;
 import java.util.Map;
 
+@Builder
 @Entity
-@Getter @NoArgsConstructor
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 public class UserProfile {
 
     @Id
@@ -27,6 +29,7 @@ public class UserProfile {
      * Key: 언어코드 (예: "ko", "en", "jp")
      * Value: 해당 언어의 번역 객체 (UserProfileTranslation)
      */
+    @Builder.Default
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "profile_id")
     @MapKeyColumn(name = "lang_code")
@@ -37,6 +40,13 @@ public class UserProfile {
     public void addTranslation(LanguageCode lang, UserProfileTranslation translation) {
         this.translations.put(lang, translation);
     }
+
+    // 프로필 이미지(썸네일)만 수정하는 메서드
+    public void updateThumbnail(String thumbnailUrl) {
+        this.thumbnailUrl = thumbnailUrl;
+    }
+
+
 }
 
 /*

@@ -20,5 +20,12 @@ public class UserProfileTranslation {
     private String bio;      // 자기소개
 
     private boolean isAutomated = false; // AI(DeepL 등)가 번역한 것인지 여부 (자동번역 플래그)
+
+    // 특정 언어의 이름과 소개글을 수정하는 메서드
+    public void updateContent(String name, String bio) {
+        this.name = name;
+        this.bio = bio;
+        this.isAutomated = false; // 수동으로 수정했으므로 자동번역 플래그 해제
+    }
 }
 
