@@ -1,0 +1,36 @@
+spring:
+  # 이메일 설정 (Gmail SMTP)
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${MAIL_USERNAME} # 인텔리제이 환경변수나 실제 이메일
+    password: ${MAIL_PASSWORD} # 구글 앱 비밀번호
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
+  # 데이터베이스 설정 (예시)
+  datasource:
+    url: jdbc:mysql://localhost:3306/artive_db
+    username: root
+    password: password
+
+# JWT 설정
+jwt:
+  # 최소 32자 이상의 복잡한 문자열 사용!
+  secret: "your-very-very-long-and-complex-secret-key-for-artive-project"
+  expiration: 3600000 # 1시간 (밀리초 단위)
+
+# 과거 프로젝트에서 쓰던 S3 설정도 미리 넣어둡니다.
+cloud:
+  aws:
+    credentials:
+      access-key: ${AWS_ACCESS_KEY}
+      secret-key: ${AWS_SECRET_KEY}
+    region:
+      static: ap-northeast-2
+    s3:
+      bucket: artive-bucket
