@@ -12,24 +12,12 @@ spring:
           starttls:
               enable: true
   datasource:
-    # H2 드라이버로 변경
-    driver-class-name: org.h2.Driver
-    # 메모리에서 실행되는 DB 주소
-    url: jdbc:h2:mem:testdb;MODE=MySQL;DB_CLOSE_DELAY=-1
-    username: sa
-    password:
-  h2:
-    console:
-      enabled: true  # 웹 브라우저에서 DB 내용을 볼 수 있게 함
+    url: ${DATABASE_URL} # Railway가 자동으로 넣어주는 변수
+    driver-class-name: org.postgresql.Driver
   jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
     hibernate:
-      ddl-auto: update # create 대신 update를 써보세요.
-      show-sql: true
-      properties:
-        hibernate:
-          format_sql: true
-          # H2를 사용 중이라면 아래 방언(Dialect) 설정을 명시해주는 게 안전합니다.
-          dialect: org.hibernate.dialect.H2Dialect
+      ddl-auto: update
 
 # JWT 설정
 jwt:
