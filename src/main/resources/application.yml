@@ -35,14 +35,12 @@ jwt:
 cloud:
   aws:
     credentials:
-      access-key: ${AWS_ACCESS_KEY}
-      secret-key: ${AWS_SECRET_KEY}
+      access-key: ${AWS_ACCESS_KEY_ID}
+      secret-key: ${AWS_SECRET_ACCESS_KEY}
     region:
-      static: ap-northeast-2
+      static: ${AWS_REGION}
     s3:
-      bucket: artive-bucket
-    stack:
-      auto: false
+      bucket: ${AWS_S3_BUCKET}
 
 logging:
   level:
