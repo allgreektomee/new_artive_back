@@ -1,8 +1,10 @@
 package com.artivefor.me.controller.auth;
 
+import com.artivefor.me.common.util.MessageCode;
 import com.artivefor.me.data.user.ArtiveUser;
 import com.artivefor.me.dto.auth.AuthRequest;
 import com.artivefor.me.dto.auth.TokenResponse;
+import com.artivefor.me.dto.common.ApiResponse;
 import com.artivefor.me.security.jwt.JwtTokenProvider;
 import com.artivefor.me.service.auth.AuthService;
 import lombok.RequiredArgsConstructor;
@@ -19,38 +21,34 @@ public class AuthController {
     private final AuthService authService;
     private final JwtTokenProvider jwtTokenProvider;
 
-    // 1. 이메일 인증 번호 전송
+    // 1. 회원가입 (추가됨)
+    @PostMapping("/signup")
+    public ResponseEntity<ApiResponse<Void>> signUp(@RequestBody AuthRequest.SignUp request) {
+        authService.signUp(request);
+        return ResponseEntity.ok(ApiResponse.success(MessageCode.AUTH_SIGNUP_SUCCESS));
+    }
+
+    // 2. 이메일 인증 번호 전송 (개선)
     @PostMapping("/email/send")
-    public ResponseEntity<String> sendEmailCode(@RequestBody AuthRequest.EmailSend request) {
-        try {
-            authService.sendCode(request.getEmail());
-            return ResponseEntity.ok("인증 번호가 발송되었습니다.");
-        } catch (Exception e) {
-            return ResponseEntity.internalServerError().body("발송 실패: " + e.getMessage());
-        }
+    public ResponseEntity<ApiResponse<Void>> sendEmailCode(@RequestBody AuthRequest.EmailSend request) {
+        authService.sendCode(request.getEmail());
+        // MessageCode.Auth에 EMAIL_SEND_SUCCESS("auth.email.send.success") 추가 필요
+        return ResponseEntity.ok(ApiResponse.success(MessageCode.AUTH_EMAIL_SEND_SUCCESS));
     }
 
-    // 2. 인증 번호 확인
+    // 3. 인증 번호 확인 (개선)
     @PostMapping("/email/verify")
-    public ResponseEntity<String> verifyCode(@RequestBody AuthRequest.EmailVerify request) {
-        if (authService.verifyCode(request.getEmail(), request.getCode())) {
-            return ResponseEntity.ok("인증 성공");
-        }
-        return ResponseEntity.status(401).body("인증 실패");
+    public ResponseEntity<ApiResponse<Void>> verifyCode(@RequestBody AuthRequest.EmailVerify request) {
+        authService.verifyCode(request.getEmail(), request.getCode());
+        return ResponseEntity.ok(ApiResponse.success(MessageCode.AUTH_EMAIL_VERIFY_SUCCESS));
     }
 
+    // 4. 로그인 (개선)
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody AuthRequest.Login request) {
-        try {
-            // 2. AuthService를 통해 유저 검증 및 정보 가져오기
-            ArtiveUser user = authService.login(request.getEmail(), request.getPassword());
+    public ResponseEntity<ApiResponse<TokenResponse>> login(@RequestBody AuthRequest.Login request) {
+        ArtiveUser user = authService.login(request.getEmail(), request.getPassword());
+        String accessToken = jwtTokenProvider.createToken(user.getEmail(), user.getRole().name());
 
-            // 3. 토큰 생성
-            String accessToken = jwtTokenProvider.createToken(user.getEmail(), user.getRole().name());
-
-            return ResponseEntity.ok(new TokenResponse(accessToken));
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(401).body(e.getMessage());
-        }
+        return ResponseEntity.ok(ApiResponse.success(new TokenResponse(accessToken), MessageCode.AUTH_LOGIN_SUCCESS));
     }
 }

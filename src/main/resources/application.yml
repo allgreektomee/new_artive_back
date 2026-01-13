@@ -42,3 +42,11 @@ cloud:
       static: ap-northeast-2
     s3:
       bucket: artive-bucket
+    stack:
+      auto: false
+
+logging:
+  level:
+    org.hibernate.SQL: debug          # 어떤 쿼리가 나가는지 (Insert, Select 등)
+    org.hibernate.type.descriptor.sql.BasicBinder: trace  # 쿼리에 어떤 값이 들어가는지
+    org.springframework.security: debug # 시큐리티가 필터를 어떻게 타는지

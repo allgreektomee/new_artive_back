@@ -27,4 +27,6 @@ public interface ArtiveUserRepository extends JpaRepository<ArtiveUser, Long> {
 
     // 4. 통계용: 전체 유저 수나 특정 권한 유저 수 확인
     long countByRole(Role role);
+
+    boolean existsByEmail(String email);
 }

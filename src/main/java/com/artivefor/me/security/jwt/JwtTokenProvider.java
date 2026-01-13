@@ -1,16 +1,26 @@
 package com.artivefor.me.security.jwt;
 
+import com.artivefor.me.data.user.ArtiveUser;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
+import lombok.RequiredArgsConstructor;
+import org.apache.tomcat.util.net.openssl.ciphers.Authentication;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Component;
 
 import java.security.Key;
 import java.util.Base64;
 import java.util.Date;
 
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.User;
+import java.util.Collections;
+
 @Component
+@RequiredArgsConstructor
 public class JwtTokenProvider {
 
     @Value("${jwt.secret}")
@@ -18,6 +28,8 @@ public class JwtTokenProvider {
 
     @Value("${jwt.expiration}")
     private long validityInMilliseconds;
+
+    private final UserDetailsService userDetailsService; // 우리 서비스 주입
 
     private Key key;
 
@@ -59,4 +71,18 @@ public class JwtTokenProvider {
             return false;
         }
     }
+    // 4. 토큰으로부터 인증 정보 객체(Authentication) 생성
+    public UsernamePasswordAuthenticationToken getAuthentication(String token) {
+        String email = getEmail(token);
+
+        // ⭐️ 중요: 스프링 기본 User가 아니라, DB에서 조회한 'ArtiveUser'를 가져옵니다.
+        // loadUserByUsername이 ArtiveUser를 반환하도록 설정되어 있어야 합니다.
+        ArtiveUser principal = (ArtiveUser) userDetailsService.loadUserByUsername(email);
+
+        // principal 자리에 ArtiveUser 객체를 그대로 넣습니다.
+        return new UsernamePasswordAuthenticationToken(principal, token, principal.getAuthorities());
+    }
+
+
+
 }

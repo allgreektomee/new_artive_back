@@ -17,10 +17,10 @@ public class ApiResponse<T> {
     private T data;            // 실제 데이터 (없을 경우 null)
 
     // 성공 응답 편의 메서드 (데이터 포함)
-    public static <T> ApiResponse<T> success(T data, String message) {
+    public static <T> ApiResponse<T> success(T data, MessageCode code) {
         return ApiResponse.<T>builder()
                 .success(true)
-                .message(message)
+                .message(MessageUtil.getMessage(code))
                 .data(data)
                 .build();
     }
@@ -33,10 +33,7 @@ public class ApiResponse<T> {
                 .build();
     }
 
-    // 성공 응답 편의 메서드 (데이터 없음)
-    public static <T> ApiResponse<T> success(String message) {
-        return success(null, message);
-    }
+
 
     // 실패 응답 편의 메서드
     public static <T> ApiResponse<T> error(String message) {

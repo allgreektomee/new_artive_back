@@ -28,6 +28,13 @@ public class UserController {
 
         return ResponseEntity.ok(ApiResponse.success(MessageCode.USER_PROFILE_UPDATE_SUCCESS));
     }
+
+    // 2. 내 프로필 조회
+    @GetMapping("/profile")
+    public ResponseEntity<ApiResponse<ProfileDto.Response>> getMyProfile(Principal principal) {
+        ProfileDto.Response response = userService.getProfile(principal.getName());
+        return ResponseEntity.ok(ApiResponse.success(response, MessageCode.USER_PROFILE_UPDATE_SUCCESS));
+    }
 }
 
 /*

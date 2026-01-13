@@ -11,6 +11,8 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ArtworkRepository extends JpaRepository<Artwork, Long> {
+    // 특정 유저의 작품을 최신순으로 페이징 조회
+    Page<Artwork> findByAuthorIdOrderByCreatedAtDesc(Long authorId, Pageable pageable);
 
     // 1. 특정 작가의 작품 목록 (관리자 페이지에서 작가 상세 조회 시 사용)
     Page<Artwork> findByAuthorId(Long userId, Pageable pageable);
@@ -23,4 +25,6 @@ public interface ArtworkRepository extends JpaRepository<Artwork, Long> {
             "WHERE t.title LIKE %:keyword% " +
             "AND KEY(a.translations) = com.artivefor.me.data.common.LanguageCode.KO")
     Page<Artwork> searchByKoreanTitle(@Param("keyword") String keyword, Pageable pageable);
+
+
 }

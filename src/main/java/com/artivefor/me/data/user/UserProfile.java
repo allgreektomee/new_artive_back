@@ -10,6 +10,7 @@ import java.util.Map;
 @Builder
 @Entity
 @Getter
+@Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 public class UserProfile {
@@ -46,6 +47,13 @@ public class UserProfile {
         this.thumbnailUrl = thumbnailUrl;
     }
 
+    public void setUser(ArtiveUser user) {
+        this.user = user;
+        // 부모 객체인 user 쪽에서도 나(profile)를 참조하도록 자동으로 설정
+        if (user != null && user.getProfile() != this) {
+            user.setProfile(this);
+        }
+    }
 
 }
 

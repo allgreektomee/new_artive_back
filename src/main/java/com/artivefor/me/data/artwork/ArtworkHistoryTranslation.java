@@ -1,11 +1,13 @@
 package com.artivefor.me.data.artwork;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Entity
-@Getter @NoArgsConstructor
+@Getter
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ArtworkHistoryTranslation {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)

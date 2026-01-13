@@ -1,5 +1,7 @@
 package com.artivefor.me.service.user;
 
+import com.artivefor.me.common.util.MessageCode;
+import com.artivefor.me.common.util.MessageUtil;
 import com.artivefor.me.data.common.LanguageCode;
 import com.artivefor.me.data.user.*;
 import com.artivefor.me.dto.user.ProfileDto;
@@ -7,6 +9,9 @@ import com.artivefor.me.repository.user.ArtiveUserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -17,7 +22,7 @@ public class UserService {
     @Transactional
     public void updateProfile(String email, ProfileDto.UpdateRequest request) {
         ArtiveUser user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("유저를 찾을 수 없습니다."));
+                .orElseThrow(() -> new RuntimeException(MessageUtil.getMessage(MessageCode.USER_NOT_FOUND)));
 
         UserProfile profile = user.getProfile();
 
@@ -32,5 +37,31 @@ public class UserService {
 
         // 내용 업데이트 (이름, 소개글)
         translation.updateContent(request.getName(), request.getBio());
+    }
+
+    @Transactional(readOnly = true)
+    public ProfileDto.Response getProfile(String email) {
+        ArtiveUser user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException(MessageUtil.getMessage(MessageCode.USER_NOT_FOUND)));
+
+        UserProfile profile = user.getProfile();
+
+        // Map<LanguageCode, Translation>을 Map<LanguageCode, TranslationResponse>로 변환
+        Map<LanguageCode, ProfileDto.TranslationResponse> translations = profile.getTranslations().entrySet().stream()
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey,
+                        e -> ProfileDto.TranslationResponse.builder()
+                                .name(e.getValue().getName())
+                                .bio(e.getValue().getBio())
+                                .isAutomated(e.getValue().isAutomated())
+                                .build()
+                ));
+
+        return ProfileDto.Response.builder()
+                .email(user.getEmail())
+                .nickname(user.getSlug())
+                .thumbnailUrl(profile.getThumbnailUrl())
+                .translations(translations)
+                .build();
     }
 }

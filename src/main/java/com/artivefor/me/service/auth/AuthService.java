@@ -1,5 +1,7 @@
 package com.artivefor.me.service.auth;
 
+import com.artivefor.me.common.exception.BusinessException;
+import com.artivefor.me.common.util.MessageCode;
 import com.artivefor.me.data.user.ArtiveUser;
 import com.artivefor.me.data.user.Role;
 import com.artivefor.me.data.user.UserProfile;
@@ -8,6 +10,9 @@ import com.artivefor.me.dto.auth.AuthRequest;
 import com.artivefor.me.repository.user.ArtiveUserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -16,7 +21,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 @RequiredArgsConstructor
-public class AuthService {
+public class AuthService implements UserDetailsService {
 
     private final EmailService emailService;
     // 이메일을 열쇠(Key)로, 인증번호를 값(Value)으로 저장하는 지도(Map)
@@ -37,6 +42,13 @@ public class AuthService {
 //        emailService.sendVerificationEmail(email, code); // 실제 메일 발송
 //    }
 
+    @Override
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        // DB에서 유저를 찾아서 반환 (ArtiveUser는 이미 UserDetails를 구현했으므로 바로 반환 가능)
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("유저를 찾을 수 없습니다: " + email));
+    }
+
     public void sendCode(String email) {
         String code = "123456"; // 테스트용 고정 번호
         codeStorage.put(email, code);
@@ -55,6 +67,12 @@ public class AuthService {
 
     @Transactional
     public void signUp(AuthRequest.SignUp request) {
+        // 1. 이메일 중복 체크
+        if (userRepository.existsByEmail(request.getEmail())) {
+            // 우리가 만든 비즈니스 예외를 던짐 -> GlobalExceptionHandler가 낚아챔
+            throw new BusinessException(MessageCode.AUTH_ALREADY_EXIST_EMAIL);
+        }
+
         // 1. 유저 본체 생성
         ArtiveUser user = ArtiveUser.builder()
                 .email(request.getEmail())

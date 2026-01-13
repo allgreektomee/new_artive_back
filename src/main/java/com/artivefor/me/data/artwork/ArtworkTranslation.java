@@ -1,11 +1,13 @@
 package com.artivefor.me.data.artwork;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Entity
-@Getter @NoArgsConstructor
+@Getter
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ArtworkTranslation {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -16,5 +18,6 @@ public class ArtworkTranslation {
     @Column(columnDefinition = "TEXT")
     private String description; // 작품 상세 설명
 
+    @Builder.Default
     private boolean isAutomated = false; // 자동 번역 여부
 }
