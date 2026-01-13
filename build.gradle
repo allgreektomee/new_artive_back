@@ -7,6 +7,8 @@ plugins {
 group = 'com.artivefor'
 version = '0.0.1-SNAPSHOT'
 description = 'artive project for Spring Boot'
+sourceCompatibility = '17'
+targetCompatibility = '17'
 
 //java {
 //	toolchain {
@@ -23,6 +25,16 @@ configurations {
 repositories {
 	mavenCentral()
 }
+// 일반 jar 파일 생성을 방지 (bootJar만 생성되도록)
+jar {
+	enabled = false
+}
+
+// 빌드 파일 이름을 app.jar로 고정 (Railway가 찾기 쉽게)
+bootJar {
+	archiveFileName = 'app.jar'
+}
+
 
 sourceSets {
 	main {
