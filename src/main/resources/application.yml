@@ -12,7 +12,7 @@ spring:
           starttls:
               enable: true
   datasource:
-    url: ${DATABASE_URL}  # Railway 환경변수를 그대로 읽어옴
+    url: ${SPRING_DATASOURCE_URL}  # Railway 환경변수를 그대로 읽어옴
     driver-class-name: org.postgresql.Driver
 
   jpa:
