@@ -6,7 +6,7 @@ import com.artivefor.me.repository.user.ArtiveUserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,7 +17,7 @@ import java.util.UUID;
 public class AdminInitializer implements CommandLineRunner {
 
     private final ArtiveUserRepository memberRepository;
-    private final BCryptPasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder;
 
     // Railway 환경 변수에서 값을 가져옵니다.
     @Value("${ADMIN_EMAIL}")
