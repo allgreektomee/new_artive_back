@@ -20,10 +20,10 @@ public class AdminInitializer implements CommandLineRunner {
     private final PasswordEncoder passwordEncoder;
 
     // Railway 환경 변수에서 값을 가져옵니다.
-    @Value("${ADMIN_EMAIL}")
+    @Value("${ADMIN_EMAIL:admin@test.com}")
     private String adminEmail;
 
-    @Value("${ADMIN_PASSWORD}")
+    @Value("${ADMIN_PASSWORD:admin@test.com}")
     private String adminPassword;
 
     @Override
