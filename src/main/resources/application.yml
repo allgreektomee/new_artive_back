@@ -12,12 +12,16 @@ spring:
           starttls:
               enable: true
   datasource:
-    url: ${DATABASE_URL} # Railway가 자동으로 넣어주는 변수
+    url: ${DATABASE_URL}  # Railway 환경변수를 그대로 읽어옴
     driver-class-name: org.postgresql.Driver
+
   jpa:
-    database-platform: org.hibernate.dialect.PostgreSQLDialect
     hibernate:
-      ddl-auto: update
+      ddl-auto: update    # 처음에는 create로 해서 테이블을 만들고 이후 update로 변경
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
 
 # JWT 설정
 jwt:
