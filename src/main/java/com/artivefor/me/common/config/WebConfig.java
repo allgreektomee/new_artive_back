@@ -13,6 +13,7 @@ public class WebConfig implements WebMvcConfigurer {
                 .allowedOrigins(
                         "https://www.artivefor.me",
                         "https://artivefor.me",
+                        "http://localhost:5173",
                         "http://localhost:3000" // 로컬 테스트용
                 )
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS")
