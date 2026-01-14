@@ -12,8 +12,8 @@ public class WebConfig implements WebMvcConfigurer {
         registry.addMapping("/**")
                 .allowedOrigins(
                         "https://www.artivefor.me",
-                        "https://artivefor.me",
-                        "http://localhost:*" // 로컬 테스트용
+                        "http://localhost:5173",
+                        "http://localhost:5175"  // 현재 프론트 포트
                 )
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS")
                 .allowedHeaders("*")
