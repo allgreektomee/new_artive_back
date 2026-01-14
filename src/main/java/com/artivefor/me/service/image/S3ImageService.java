@@ -40,8 +40,8 @@ public class S3ImageService {
 
             try {
                 // S3 업로드 로직 (기존과 동일)
-                amazonS3.putObject(new PutObjectRequest(bucket, fileName, file.getInputStream(), new ObjectMetadata())
-                        .withCannedAcl(CannedAccessControlList.PublicRead));
+                amazonS3.putObject(new PutObjectRequest(bucket, fileName, file.getInputStream(), new ObjectMetadata()));
+
 
                 responses.add(new ImageUploadResponse(amazonS3.getUrl(bucket, fileName).toString(), file.getOriginalFilename()));
             } catch (IOException e) {
