@@ -36,7 +36,7 @@ public class S3ImageService {
             String extension = getExtension(file.getOriginalFilename());
 
             // 파일명: {유저ID}/{카테고리}/{날짜시간}_{순번}{확장자}
-            String fileName = String.format("%s/%s/%s_%d%s", userId, category, timestamp, i, extension);
+            String fileName = String.format("%s/%s/%s_%d%s.webp", userId, category, timestamp, i, extension);
 
             try {
                 // S3 업로드 로직 (기존과 동일)
