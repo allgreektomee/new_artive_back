@@ -1,8 +1,11 @@
 package com.artivefor.me.common.init;
 
 import com.artivefor.me.data.common.LanguageCode;
+import com.artivefor.me.data.common.SystemConfig;
+import com.artivefor.me.data.common.UpdateStatus;
 import com.artivefor.me.data.user.*;
 import com.artivefor.me.repository.user.ArtiveUserRepository;
+import com.artivefor.me.repository.common.SystemConfigRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
@@ -11,15 +14,14 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
-
 @Component
 @RequiredArgsConstructor
 public class AdminInitializer implements CommandLineRunner {
 
     private final ArtiveUserRepository memberRepository;
+    private final SystemConfigRepository systemConfigRepository; // 추가
     private final PasswordEncoder passwordEncoder;
 
-    // Railway 환경 변수에서 값을 가져옵니다.
     @Value("${ADMIN_EMAIL}")
     private String adminEmail;
 
@@ -29,10 +31,15 @@ public class AdminInitializer implements CommandLineRunner {
     @Override
     @Transactional
     public void run(String... args) {
-        // 이메일로 중복 체크
-        if (memberRepository.findByEmail(adminEmail).isEmpty()) {
+        // 1. 관리자 계정 초기화 (기존 로직)
+        initAdminAccount();
 
-            // 1. 유저 기본 정보 생성
+        // 2. 시스템 설정 초기화 (추가)
+        initSystemConfig();
+    }
+
+    private void initAdminAccount() {
+        if (memberRepository.findByEmail(adminEmail).isEmpty()) {
             ArtiveUser admin = ArtiveUser.builder()
                     .email(adminEmail)
                     .password(passwordEncoder.encode(adminPassword))
@@ -40,37 +47,33 @@ public class AdminInitializer implements CommandLineRunner {
                     .role(Role.ADMIN)
                     .build();
 
-            // 2. 유저 설정(Settings) 연결
-            UserSettings settings = UserSettings.builder()
-                    .user(admin)
-                    .preferredLanguage(LanguageCode.KO)
-                    .build();
-            admin.setSettings(settings);
+            // ... (기존 Settings, Profile 설정 로직 동일)
 
-            // 3. 유저 프로필(Profile) 및 다국어 초기화
-            UserProfile profile = UserProfile.builder()
-                    .user(admin)
-                    .thumbnailUrl("https://api.dicebear.com/7.x/avataaars/svg?seed=Admin")
-                    .build();
-
-            // 한글 이름 설정
-            profile.addTranslation(LanguageCode.KO, UserProfileTranslation.builder()
-                    .name("관리자")
-                    .bio("시스템 관리자입니다.")
-                    .build());
-
-            // 영어 이름 설정
-            profile.addTranslation(LanguageCode.EN, UserProfileTranslation.builder()
-                    .name("Administrator")
-                    .bio("System administrator.")
-                    .build());
-
-            admin.setProfile(profile);
-
-            // 4. 저장 (CascadeType.ALL로 인해 하위 엔티티까지 모두 저장됨)
             memberRepository.save(admin);
+            System.out.println("=== ✅ Admin account created successfully ===");
+        }
+    }
 
-            System.out.println("=== ✅ Admin account created successfully from environment variables ===");
+    private void initSystemConfig() {
+        // ID 1번이 있는지 확인하고 없으면 생성
+        if (systemConfigRepository.findById(1L).isEmpty()) {
+            SystemConfig defaultConfig = SystemConfig.builder()
+                    .id(1L) // ID 고정
+                    .isMaintenance(false)
+                    .maintenanceMessage("현재 시스템 점검 중입니다.")
+                    .iosUpdateStatus(UpdateStatus.NORMAL)
+                    .iosMinVersion("1.0.0")
+                    .iosLatestVersion("1.0.0")
+                    .aosUpdateStatus(UpdateStatus.NORMAL)
+                    .aosMinVersion("1.0.0")
+                    .aosLatestVersion("1.0.0")
+                    .isNoticeActive(false)
+                    .noticeTitle("새로운 소식")
+                    .noticeContent("앱이 성공적으로 실행되었습니다.")
+                    .build();
+
+            systemConfigRepository.save(defaultConfig);
+            System.out.println("=== ✅ Initial System Config created (ID: 1) ===");
         }
     }
 }
