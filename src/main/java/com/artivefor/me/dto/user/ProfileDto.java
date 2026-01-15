@@ -9,6 +9,7 @@ public class ProfileDto {
 
     // 프로필 수정 요청용
     @Getter @Setter
+    @NoArgsConstructor // JSON 파싱을 위해 기본 생성자 필요
     public static class UpdateRequest {
         private String name;
         private String bio;

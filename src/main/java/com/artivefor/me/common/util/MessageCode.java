@@ -7,9 +7,10 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public enum MessageCode {
 
+    USER_PASSWORD_MISMATCH("user.password.mismatch"),
 
     //USER
-
+    USER_ALREADY_REG("user.already.reg"),
     USER_PROFILE_UPDATE_SUCCESS("user.profile.update.success"),
     USER_NOT_FOUND("user.not.found"),
     PROFILE_GET_SUCCESS("user.profile.get.success"),

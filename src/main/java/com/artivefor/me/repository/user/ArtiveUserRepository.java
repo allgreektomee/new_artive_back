@@ -29,4 +29,6 @@ public interface ArtiveUserRepository extends JpaRepository<ArtiveUser, Long> {
     long countByRole(Role role);
 
     boolean existsByEmail(String email);
+
+    boolean existsBySlug(String slug);
 }
