@@ -58,7 +58,6 @@ public class AdminInitializer implements CommandLineRunner {
         // ID 1번이 있는지 확인하고 없으면 생성
         if (systemConfigRepository.findById(1L).isEmpty()) {
             SystemConfig defaultConfig = SystemConfig.builder()
-                    .id(1L) // ID 고정
                     .isMaintenance(false)
                     .maintenanceMessage("현재 시스템 점검 중입니다.")
                     .iosUpdateStatus(UpdateStatus.NORMAL)
