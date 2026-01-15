@@ -12,28 +12,27 @@ import org.springframework.web.bind.annotation.*;
 import java.security.Principal;
 
 @RestController
-@RequestMapping("/api/v1/users")
+@RequestMapping("/api/v1/users") // 유저 데이터 관련 API
 @RequiredArgsConstructor
 public class UserController {
 
     private final UserService userService;
 
-    // 내 프로필 수정
-    @PutMapping("/profile")
-    public ResponseEntity<ApiResponse<Void>> updateProfile(
-            Principal principal, // 현재 로그인한 유저 정보
-            @RequestBody ProfileDto.UpdateRequest request) {
-
-        userService.updateProfile(principal.getName(), request);
-
-        return ResponseEntity.ok(ApiResponse.success(MessageCode.USER_PROFILE_UPDATE_SUCCESS));
-    }
-
-    // 2. 내 프로필 조회
+    // 1. 내 프로필 조회 (로그인한 본인의 정보)
     @GetMapping("/profile")
     public ResponseEntity<ApiResponse<ProfileDto.Response>> getMyProfile(Principal principal) {
+        // principal.getName()을 통해 현재 접속한 유저의 이메일을 가져옴
         ProfileDto.Response response = userService.getProfile(principal.getName());
-        return ResponseEntity.ok(ApiResponse.success(response, MessageCode.USER_PROFILE_UPDATE_SUCCESS));
+        return ResponseEntity.ok(ApiResponse.success(response, MessageCode.PROFILE_GET_SUCCESS));
+    }
+
+    // 2. 내 프로필 수정
+    @PutMapping("/profile")
+    public ResponseEntity<ApiResponse<Void>> updateProfile(
+            Principal principal,
+            @RequestBody ProfileDto.UpdateRequest request) {
+        userService.updateProfile(principal.getName(), request);
+        return ResponseEntity.ok(ApiResponse.success(MessageCode.USER_PROFILE_UPDATE_SUCCESS));
     }
 }
 
