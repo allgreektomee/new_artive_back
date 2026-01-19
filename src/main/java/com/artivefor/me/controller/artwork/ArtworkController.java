@@ -37,6 +37,15 @@ public class ArtworkController {
         return ApiResponse.success(artworkService.createArtwork(user.getId(), request), MessageCode.SUCCESS);
     }
 
+    /**
+     * 작품 상세 조회 (수정 폼 세팅용)
+     */
+    @GetMapping("/{id}")
+    public ApiResponse<ArtworkDetailResponse> getArtwork(@PathVariable Long id) {
+        // Service에서 해당 ID의 작품을 찾아 DTO로 변환해 반환
+        return ApiResponse.success(artworkService.getArtworkDetail(id), MessageCode.SUCCESS);
+    }
+
     @PutMapping("/{artworkId}")
     public ApiResponse<Void> updateArtwork(
             @AuthenticationPrincipal ArtiveUser user,

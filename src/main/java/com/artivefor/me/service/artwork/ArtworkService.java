@@ -7,6 +7,7 @@ import com.artivefor.me.data.common.ArtworkConstants;
 import com.artivefor.me.data.common.LanguageCode;
 import com.artivefor.me.data.user.ArtiveUser;
 import com.artivefor.me.dto.artwork.ArtworkCreateRequest;
+import com.artivefor.me.dto.artwork.ArtworkDetailResponse;
 import com.artivefor.me.dto.artwork.ArtworkListResponse;
 import com.artivefor.me.dto.artwork.ArtworkUpdateRequest;
 import com.artivefor.me.repository.artwork.ArtworkHistoryRepository;
@@ -60,7 +61,30 @@ public class ArtworkService {
         return artworkRepository.save(artwork).getId();
     }
 
-    @Transactional(readOnly = true)
+    public ArtworkDetailResponse getArtworkDetail(Long id) {
+        Artwork artwork = artworkRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("작품을 찾을 수 없습니다."));
+
+        // 다국어 정보 추출
+        ArtworkTranslation ko = artwork.getTranslations().get(LanguageCode.KO);
+        ArtworkTranslation en = artwork.getTranslations().get(LanguageCode.EN);
+
+        return ArtworkDetailResponse.builder()
+                .id(artwork.getId())
+                .thumbnailUrl(artwork.getThumbnailUrl())
+                .medium(artwork.getMedium())
+                .size(artwork.getSize())
+                .visibility(artwork.getVisibility())
+                // 다국어 세팅 (null 체크 포함)
+                .koTitle(ko != null ? ko.getTitle() : "")
+                .koDescription(ko != null ? ko.getDescription() : "")
+                .enTitle(en != null ? en.getTitle() : "")
+                .enDescription(en != null ? en.getDescription() : "")
+                .startedAt(artwork.getStartedAt() != null ? artwork.getStartedAt().toString() : null)
+                .finishedAt(artwork.getFinishedAt() != null ? artwork.getFinishedAt().toString() : null)
+                .build();
+    }
+
     public Page<ArtworkListResponse> getMyArtworks(Long userId, int page) {
         ArtiveUser author = entityManager.getReference(ArtiveUser.class, userId);
         // 하드코딩된 10 대신 상수를 사용
