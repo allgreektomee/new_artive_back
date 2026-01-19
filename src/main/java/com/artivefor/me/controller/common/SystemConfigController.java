@@ -1,6 +1,8 @@
 package com.artivefor.me.controller.common;
 
+import com.artivefor.me.common.util.MessageCode;
 import com.artivefor.me.data.common.SystemConfig;
+import com.artivefor.me.dto.common.ApiResponse;
 import com.artivefor.me.service.common.SystemConfigService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -18,8 +20,9 @@ public class SystemConfigController {
      * GET /api/v1/config
      */
     @GetMapping
-    public ResponseEntity<SystemConfig> getConfig() {
-        return ResponseEntity.ok(systemConfigService.getSystemConfig());
+    public ApiResponse<SystemConfig> getConfig() {
+
+        return ApiResponse.success(systemConfigService.getSystemConfig(), MessageCode.SUCCESS);
     }
 
     /**
@@ -27,8 +30,8 @@ public class SystemConfigController {
      * PATCH /api/v1/config/info
      */
     @PatchMapping("/info")
-    public ResponseEntity<Void> updateConfig(@RequestBody SystemConfig config) {
+    public ApiResponse<Void> updateConfig(@RequestBody SystemConfig config) {
         systemConfigService.updateSystemConfig(config);
-        return ResponseEntity.ok().build();
+        return ApiResponse.success(MessageCode.SUCCESS);
     }
 }

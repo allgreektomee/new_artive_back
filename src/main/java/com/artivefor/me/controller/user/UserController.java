@@ -20,19 +20,19 @@ public class UserController {
 
     // 1. 내 프로필 조회 (로그인한 본인의 정보)
     @GetMapping("/profile")
-    public ResponseEntity<ApiResponse<ProfileDto.Response>> getMyProfile(Principal principal) {
+    public ApiResponse<ProfileDto.Response> getMyProfile(Principal principal) {
         // principal.getName()을 통해 현재 접속한 유저의 이메일을 가져옴
         ProfileDto.Response response = userService.getProfile(principal.getName());
-        return ResponseEntity.ok(ApiResponse.success(response, MessageCode.PROFILE_GET_SUCCESS));
+        return ApiResponse.success(response, MessageCode.PROFILE_GET_SUCCESS);
     }
 
     // 2. 내 프로필 수정
     @PutMapping("/profile")
-    public ResponseEntity<ApiResponse<Void>> updateProfile(
+    public ApiResponse<Void> updateProfile(
             Principal principal,
             @RequestBody ProfileDto.UpdateRequest request) {
         userService.updateProfile(principal.getName(), request);
-        return ResponseEntity.ok(ApiResponse.success(MessageCode.USER_PROFILE_UPDATE_SUCCESS));
+        return ApiResponse.success(MessageCode.USER_PROFILE_UPDATE_SUCCESS);
     }
 }
 

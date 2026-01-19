@@ -13,8 +13,7 @@ public class WebConfig implements WebMvcConfigurer {
                 .allowedOrigins(
                         "https://api.artivefor.me",
                         "https://www.artivefor.me",
-                        "http://localhost:5173",
-                        "http://localhost:5175"  // 현재 프론트 포트
+                        "https://artive-admin-allgreektomee.vercel.app"
                 )
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS")
                 .allowedHeaders("*")

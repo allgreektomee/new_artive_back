@@ -6,7 +6,7 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @RequiredArgsConstructor
 public enum MessageCode {
-
+    SUCCESS("user.password.mismatch"),
     USER_PASSWORD_MISMATCH("user.password.mismatch"),
 
     //USER
