@@ -72,15 +72,21 @@ public class Artwork extends BaseTimeEntity {
         this.translations.put(lang, translation);
     }
 
-    public void updateInfo(WorkStatus status, String medium, String size) {
-        if (status != null) {
-            this.status = status;
-        }
-        if (medium != null) {
-            this.medium = medium;
-        }
-        if (size != null) {
-            this.size = size;
+    public void update(String thumbnailUrl, String medium, String size,
+                       Visibility visibility, WorkStatus status,
+                       List<String> images, LocalDate startedAt, LocalDate finishedAt) {
+        this.thumbnailUrl = thumbnailUrl;
+        this.medium = medium;
+        this.size = size;
+        this.visibility = visibility;
+        this.status = status;
+        this.startedAt = startedAt;
+        this.finishedAt = finishedAt;
+
+        // @ElementCollection 리스트 갱신
+        this.images.clear();
+        if (images != null) {
+            this.images.addAll(images);
         }
     }
 }

@@ -20,4 +20,9 @@ public class ArtworkTranslation {
 
     @Builder.Default
     private boolean isAutomated = false; // 자동 번역 여부
+
+    public void update(String title, String desc) {
+        this.title = title;
+        this.description = desc;
+    }
 }

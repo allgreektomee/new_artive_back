@@ -3,23 +3,24 @@ package com.artivefor.me.dto.artwork;
 import com.artivefor.me.data.artwork.ArtworkTranslation;
 import com.artivefor.me.data.artwork.WorkStatus;
 import com.artivefor.me.data.common.LanguageCode;
+import com.artivefor.me.data.common.Visibility;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 
 import java.util.List;
 import java.util.Map;
 
 public record ArtworkCreateRequest(
-        String startedAt,   // "2026-01-01" 형식
-        String finishedAt,  // 완성되지 않았다면 null 가능
-        WorkStatus status,
+        String koTitle,
+        String koDescription,
+        String enTitle,
+        String enDescription,
+        String thumbnailUrl,
+        List<String> images,
+        Visibility visibility,
         String medium,
         String size,
-        String thumbnailUrl, // ⭐️ 추가: S3에서 받아온 이미지 URL
-        List<String> images,
-        Map<LanguageCode, TranslationRequest> translations // Translation도 DTO로 받는 게 깔끔함
-) {
-    // 내부 클래스로 번역 정보 DTO 정의
-    public record TranslationRequest(
-            String title,
-            String description
-    ) {}
-}
+        String startedAt,
+        String finishedAt,
+        WorkStatus status
+) {}
