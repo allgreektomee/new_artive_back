@@ -42,6 +42,7 @@ public class ArtworkService {
                 .medium(request.medium())
                 .size(request.size())
                 .thumbnailUrl(request.thumbnailUrl()) // DTO에 추가된 필드 매핑
+                .images(request.images())
                 .startedAt(parseDate(request.startedAt()))
                 .finishedAt(parseDate(request.finishedAt()))
                 .build();

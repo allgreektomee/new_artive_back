@@ -14,6 +14,7 @@ public record ArtworkCreateRequest(
         String medium,
         String size,
         String thumbnailUrl, // ⭐️ 추가: S3에서 받아온 이미지 URL
+        List<String> images,
         Map<LanguageCode, TranslationRequest> translations // Translation도 DTO로 받는 게 깔끔함
 ) {
     // 내부 클래스로 번역 정보 DTO 정의

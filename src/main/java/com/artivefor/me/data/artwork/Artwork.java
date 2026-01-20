@@ -34,6 +34,15 @@ public class Artwork extends BaseTimeEntity {
     private String medium; // 재료
     private String size;   // 규격
 
+    @ElementCollection
+    @CollectionTable(
+            name = "artwork_images",
+            joinColumns = @JoinColumn(name = "artwork_id")
+    )
+    @Column(name = "image_url")
+    @OrderColumn(name = "list_order") // 🚀 중요: 드래그 앤 드롭 순서 저장
+    private List<String> images = new ArrayList<>();
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private ArtiveUser author;
