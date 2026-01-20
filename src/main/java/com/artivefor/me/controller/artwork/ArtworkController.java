@@ -52,7 +52,7 @@ public class ArtworkController {
             @PathVariable Long artworkId,
             @RequestBody ArtworkUpdateRequest request
     ) {
-        artworkService.updateArtwork(user.getId(), artworkId, request);
+        artworkService.updateArtwork( artworkId, request);
         return ApiResponse.success(MessageCode.SUCCESS);
     }
 

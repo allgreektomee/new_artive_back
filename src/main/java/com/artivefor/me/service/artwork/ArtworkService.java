@@ -134,6 +134,7 @@ public class ArtworkService {
 
         // 3. 다국어 정보 업데이트 (Map 구조 활용)
         processTranslations(artwork, request);
+
     }
 
     // 상세 업데이트 로직 내부에서 호출
