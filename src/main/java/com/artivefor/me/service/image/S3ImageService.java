@@ -33,8 +33,9 @@ public class S3ImageService {
 
         for (int i = 0; i < files.size(); i++) {
             MultipartFile file = files.get(i);
-            String extension = getExtension(file.getOriginalFilename());
+//            String extension = getExtension(file.getOriginalFilename());
 
+            String extension = UUID.randomUUID().toString().substring(0, 4);
             // 파일명: {유저ID}/{카테고리}/{날짜시간}_{순번}{확장자}
             String fileName = String.format("%s/%s/%s_%d%s.webp", userId, category, timestamp, i, extension);
 
