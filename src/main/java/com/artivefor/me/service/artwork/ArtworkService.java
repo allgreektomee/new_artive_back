@@ -73,6 +73,7 @@ public class ArtworkService {
         return ArtworkDetailResponse.builder()
                 .id(artwork.getId())
                 .thumbnailUrl(artwork.getThumbnailUrl())
+                .images(artwork.getImages())
                 .medium(artwork.getMedium())
                 .size(artwork.getSize())
                 .visibility(artwork.getVisibility())
