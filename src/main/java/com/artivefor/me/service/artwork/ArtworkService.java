@@ -82,6 +82,7 @@ public class ArtworkService {
                 .medium(artwork.getMedium())
                 .size(artwork.getSize())
                 .visibility(artwork.getVisibility())
+                .status(artwork.getStatus())
                 // 다국어 세팅 (null 체크 포함)
                 .koTitle(ko != null ? ko.getTitle() : "")
                 .koDescription(ko != null ? ko.getDescription() : "")
