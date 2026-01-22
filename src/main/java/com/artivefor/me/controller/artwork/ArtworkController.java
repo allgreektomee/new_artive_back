@@ -98,11 +98,14 @@ public class ArtworkController {
      * 2. 특정 작품의 히스토리 목록만 조회
      */
     @GetMapping("/{artworkId}/histories")
-    public ApiResponse<List<HistoryListResponse>> getArtworkHistories(
+    public ApiResponse<Page<HistoryListResponse>> getArtworkHistories(
             @PathVariable Long artworkId,
             @RequestParam(defaultValue = "KO") LanguageCode lang,
             @RequestParam(defaultValue = ArtworkConstants.DEFAULT_PAGE_NUMBER) int page)
     {
+
         return ApiResponse.success(artworkHistoryService.getHistoryList(artworkId, lang, page), MessageCode.SUCCESS);
     }
 }
+
+

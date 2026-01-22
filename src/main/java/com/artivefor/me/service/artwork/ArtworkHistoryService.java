@@ -5,12 +5,11 @@ import com.artivefor.me.data.artwork.ArtworkHistory;
 import com.artivefor.me.data.artwork.ArtworkHistoryTranslation;
 import com.artivefor.me.data.common.ArtworkConstants;
 import com.artivefor.me.data.common.LanguageCode;
+import com.artivefor.me.data.common.Visibility;
 import com.artivefor.me.dto.artwork.HistoryCreateRequest;
 import com.artivefor.me.dto.artwork.HistoryListResponse;
-import com.artivefor.me.dto.artwork.HistoryUpdateRequest;
 import com.artivefor.me.repository.artwork.ArtworkHistoryRepository;
 import com.artivefor.me.repository.artwork.ArtworkRepository;
-import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -48,59 +47,67 @@ public class ArtworkHistoryService {
                 .artwork(artwork)
                 .imageUrl(request.imageUrl())
                 .type(request.type())
+                .visibility(request.visibility() != null ? request.visibility() : Visibility.PUBLIC)
                 .build();
 
-        // 4. 다국어 정보 추가 (DTO -> Entity 변환)
-        request.translations().forEach((lang, transDto) -> {
-            ArtworkHistoryTranslation translation = ArtworkHistoryTranslation.builder()
-                    .title(transDto.title())
-                    .content(transDto.description())
-                    .build();
-            history.addTranslation(lang, translation);
-        });
+        // 3. ⭐️ 다국어 정보 처리 (DTO -> Entity 변환 로직)
+        addHistoryTranslation(history, LanguageCode.KO, request.koTitle(), request.koContent());
+        addHistoryTranslation(history, LanguageCode.EN, request.enTitle(), request.enContent());
 
         return historyRepository.save(history).getId();
     }
 
+    /** 🚀 다국어 추가 헬퍼 메서드 */
+    private void addHistoryTranslation(ArtworkHistory history, LanguageCode lang, String title, String content) {
+        if (title != null && !title.isBlank()) {
+            ArtworkHistoryTranslation translation = ArtworkHistoryTranslation.builder()
+                    .title(title)
+                    .content(content)
+                    .build();
+            history.addTranslation(lang, translation);
+        }
+    }
+
     @Transactional(readOnly = true)
-    public List<HistoryListResponse> getHistoryList(Long artworkId, LanguageCode lang,int page) {
+    public Page<HistoryListResponse> getHistoryList(Long artworkId, LanguageCode lang,int page) {
         // 1. 작품이 존재하는지 먼저 확인
         if (!artworkRepository.existsById(artworkId)) {
             throw new IllegalArgumentException("존재하지 않는 작품입니다.");
         }
 
-        // 2. 페이징 조회
         PageRequest pageRequest = PageRequest.of(page, ArtworkConstants.PAGE_SIZE);
         Page<ArtworkHistory> historyPage = historyRepository.findByArtworkIdOrderByCreatedAtDesc(artworkId, pageRequest);
 
-        // 2. 해당 작품의 히스토리들을 생성일 역순으로 조회
-        return historyPage.getContent().stream()
-                .map(history -> {
-                    // 해당 언어 번역본 찾기 (없으면 한국어 기본)
-                    ArtworkHistoryTranslation translation = history.getTranslations().getOrDefault(lang,
-                            history.getTranslations().get(LanguageCode.KO));
+        // 🚀 .toList() 대신 .map()을 사용해서 Page 객체를 유지합니다.
+        return historyPage.map(history -> {
+            ArtworkHistoryTranslation translation = history.getTranslations().get(lang);
+            if (translation == null) {
+                translation = history.getTranslations().get(LanguageCode.KO);
+            }
 
-                    return new HistoryListResponse(
-                            history.getId(),
-                            history.getImageUrl(),
-                            history.getType(),
-                            translation != null ? translation.getTitle() : "Untitled",
-                            history.getCreatedAt()
-                    );
-                })
-                .toList();
+            return new HistoryListResponse(
+                    history.getId(),
+                    history.getImageUrl(),
+                    history.getType(),
+                    translation != null ? translation.getTitle() : "Untitled",
+                    translation != null ? translation.getContent() : "",
+                    history.getCreatedAt()
+            );
+        });
+
     }
 
     /**
      * 히스토리 삭제 (userId 기반)
      */
+    @Transactional
     public void deleteHistory(Long userId, Long historyId) {
         ArtworkHistory history = historyRepository.findById(historyId)
                 .orElseThrow(() -> new IllegalArgumentException("히스토리를 찾을 수 없습니다."));
 
-        // [권한 체크]
+        // [보안] 해당 히스토리가 속한 작품의 작가가 현재 로그인한 유저인지 체크
         if (!history.getArtwork().getAuthor().getId().equals(userId)) {
-            return;
+            throw new AccessDeniedException("본인의 작품 기록만 삭제할 수 있습니다.");
         }
 
         historyRepository.delete(history);

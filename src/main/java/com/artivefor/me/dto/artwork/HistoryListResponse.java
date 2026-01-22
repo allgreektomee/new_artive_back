@@ -8,6 +8,7 @@ public record HistoryListResponse(
         Long id,
         String imageUrl,
         HistoryType type,
-        String description,
+        String title,
+        String content, // 🚀 내용 추가
         LocalDateTime createdAt
 ) {}

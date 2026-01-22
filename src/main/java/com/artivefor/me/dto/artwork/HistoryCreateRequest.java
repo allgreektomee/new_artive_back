@@ -1,18 +1,17 @@
 package com.artivefor.me.dto.artwork;
 
-import com.artivefor.me.data.artwork.ArtworkHistoryTranslation;
-import com.artivefor.me.data.artwork.HistoryType;
-import com.artivefor.me.data.common.LanguageCode;
 
-import java.util.Map;
+import com.artivefor.me.data.artwork.HistoryType;
+import com.artivefor.me.data.common.Visibility;
+
 
 public record HistoryCreateRequest(
-        String imageUrl,      // S3 업로드 후 받은 URL
-        HistoryType type,     // MANUAL, YOUTUBE 등
-        Map<LanguageCode, HistoryTranslationRequest> translations
-) {
-    public record HistoryTranslationRequest(
-            String title,       // 히스토리 제목
-            String description  // 히스토리 상세 설명
-    ) {}
-}
+        String imageUrl,
+        HistoryType type,
+        Visibility visibility,
+        // 평면화된 다국어 필드
+        String koTitle,
+        String koContent,
+        String enTitle,
+        String enContent
+) {}
