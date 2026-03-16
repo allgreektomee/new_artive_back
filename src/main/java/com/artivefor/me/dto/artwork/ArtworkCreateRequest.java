@@ -22,5 +22,6 @@ public record ArtworkCreateRequest(
         String size,
         String startedAt,
         String finishedAt,
+        String externalUrl, // 워드프레스 본문 URL
         WorkStatus status
 ) {}

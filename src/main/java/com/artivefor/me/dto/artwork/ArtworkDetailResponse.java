@@ -20,5 +20,6 @@ public record ArtworkDetailResponse(
     String size,
     String startedAt,
     String finishedAt,
+    String externalUrl,
     WorkStatus status
 ) {}

@@ -9,5 +9,6 @@ public record ArtworkListResponse(
         String thumbnailUrl,
         String title,      // 현재 언어에 맞는 제목
         WorkStatus status,
+        String externalUrl, // 워드프레스 본문 URL
         long totalHistoryCount // (선택) 히스토리가 몇 개 달렸는지 보여주면 좋음
 ) {}
