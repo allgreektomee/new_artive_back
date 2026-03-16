@@ -28,20 +28,23 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(csrf -> csrf.disable())
-                // 1. CORS 설정 적용
+                // 1. CORS 설정을 가장 먼저 적용
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        // 2. 이미지 업로드 경로를 테스트를 위해 임시로 열어두거나, auth 경로에 추가
-                        .requestMatchers("/api/v1/artworks/**",
-                                "/api/v1/auth/**",
-                                "/swagger-ui/**",
-                                "/v3/api-docs/**",
-                                "/api/v1/images/**",
-                                "/api/v1/admin/insight/**", // insight 관련 모든 경로
-                                "/api/v1/admin/log/**",     // log 관련 모든 경로
-                                "/api/v1/admin/**"
+                        // 💡 [중요] 모든 OPTIONS(Preflight) 요청을 최우선으로 허용
+                        .requestMatchers(org.springframework.http.HttpMethod.OPTIONS, "/**").permitAll()
 
+                        // 2. 관리자 경로 및 공용 경로 허용
+                        .requestMatchers(
+                                "/api/v1/artworks/**",
+                                "/api/v1/auth/**",
+                                "/api/v1/images/**",
+                                "/api/v1/admin/insight/**",
+                                "/api/v1/admin/log/**",
+                                "/api/v1/admin/**",
+                                "/swagger-ui/**",
+                                "/v3/api-docs/**"
                         ).permitAll()
                         .anyRequest().authenticated()
                 )
@@ -51,17 +54,24 @@ public class SecurityConfig {
         return http.build();
     }
 
-    // 3. CORS 상세 설정 Bean 추가
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
 
-        // 프론트엔드 주소 (포트번호 5175 확인됨) 허용
-        configuration.setAllowedOrigins(Arrays.asList("https://api.artivefor.me","http://localhost:5175", "https://www.artivefor.me","http://localhost:5173","http://localhost:5174"));
+        // 💡 패턴 기반으로 도메인 허용 (더 확실함)
+        configuration.setAllowedOriginPatterns(Arrays.asList(
+                "https://www.artivefor.me",
+                "https://artivefor.me",
+                "http://localhost:5173",
+                "http://localhost:5174",
+                "http://localhost:5175"
+        ));
+
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-        configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "Cache-Control"));
-        configuration.setAllowedHeaders(List.of("*"));
-        configuration.setAllowCredentials(true); // 쿠키/인증정보 허용
+        // 💡 모든 헤더 허용으로 단순화하여 충돌 방지
+        configuration.setAllowedHeaders(Arrays.asList("*"));
+        configuration.setAllowCredentials(true);
+        configuration.setMaxAge(3600L); // 브라우저가 CORS 정보를 1시간 동안 기억하도록 설정
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
