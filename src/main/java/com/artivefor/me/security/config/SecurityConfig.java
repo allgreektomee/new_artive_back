@@ -28,24 +28,27 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(csrf -> csrf.disable())
-                // 1. CORS 설정을 가장 먼저 적용
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        // 💡 [중요] 모든 OPTIONS(Preflight) 요청을 최우선으로 허용
+                        // 1. OPTIONS 요청은 무조건 최우선 허용 (CORS 해결)
                         .requestMatchers(org.springframework.http.HttpMethod.OPTIONS, "/**").permitAll()
 
-                        // 2. 관리자 경로 및 공용 경로 허용
+                        // 2. 공개 API (artworks, auth, images 등)
                         .requestMatchers(
                                 "/api/v1/artworks/**",
                                 "/api/v1/auth/**",
                                 "/api/v1/images/**",
-                                "/api/v1/admin/insight/**",
-                                "/api/v1/admin/log/**",
-                                "/api/v1/admin/**",
+                                "/api/v1/config/**",
                                 "/swagger-ui/**",
-                                "/v3/api-docs/**"
+                                "/v3/api-docs/**",
+                                "/api/hello"
                         ).permitAll()
+
+                        // 3. 관리자 API (현재 403 나는 구간)
+                        // 명세서 상의 /api/v1/admin/{resource} 구조를 모두 포함하도록 명시
+                        .requestMatchers("/api/v1/admin/**").permitAll()
+
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider),
