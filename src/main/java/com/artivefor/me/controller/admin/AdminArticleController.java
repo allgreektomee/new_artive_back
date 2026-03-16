@@ -30,7 +30,7 @@ public class AdminArticleController {
     // === 통합 저장 로직 ===
     @PostMapping("/{resource}") // /admin/insights 또는 /admin/logs
     public ApiResponse<Long> createArticle(@PathVariable String resource, @RequestBody ArticleDto request) {
-        ContentType contentType = ContentType.valueOf(resource.toUpperCase().substring(0, resource.length() - 1)); // insights -> INSIGHT
+        ContentType contentType = ContentType.valueOf(resource.toUpperCase());
         
         Category category = categoryRepository.findById(request.getCategoryId())
                 .orElseThrow(() -> new IllegalArgumentException("Invalid Category ID"));
@@ -50,23 +50,19 @@ public class AdminArticleController {
         return ApiResponse.success(saved.getId(), MessageCode.SUCCESS);
     }
 
+
     @GetMapping("/{resource}/categories")
     public ApiResponse<List<Category>> getCategories(@PathVariable String resource) {
-        // 1. URL의 resource(insights/logs)를 CategoryType(INSIGHT/LOG)으로 변환
-        // substring 로직을 그대로 쓰거나, 명시적으로 매핑
-        CategoryType type = CategoryType.valueOf(resource.toUpperCase().substring(0, resource.length() - 1));
-
-        // 2. 레포지토리에서 해당 타입의 카테고리만 순서대로 가져옴
-        List<Category> categories = categoryRepository.findAllByTypeOrderByDisplayOrderAsc(type);
-
-        return ApiResponse.success(categories, MessageCode.SUCCESS);
+        // 여기서도 바로 매핑!
+        CategoryType type = CategoryType.valueOf(resource.toUpperCase());
+        return ApiResponse.success(categoryRepository.findAllByTypeOrderByDisplayOrderAsc(type), MessageCode.SUCCESS);
     }
 
     // === 통합 조회 로직 ===
     @GetMapping("/{resource}")
     public ApiResponse<Page<Article>> getArticles(@PathVariable String resource, @PageableDefault(size = 10) Pageable pageable) {
         // URL 경로(insights/logs)를 Enum으로 변환 (단수형으로)
-        ContentType contentType = ContentType.valueOf(resource.toUpperCase().substring(0, resource.length() - 1));
+        ContentType contentType = ContentType.valueOf(resource.toUpperCase());
         return ApiResponse.success(articleRepository.findAllByType(contentType, pageable), MessageCode.SUCCESS);
     }
 
