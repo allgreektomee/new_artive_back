@@ -24,7 +24,6 @@ public class Article extends BaseTimeEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")
-    @JsonIgnore // ? 추가: JSON 변환 시 카테고리 내부에서 아티클을 다시 참조하는 루프를 끊음
     private Category category;
 
     private String koTitle;
