@@ -2,6 +2,7 @@ package com.artivefor.me.controller.admin;
 
 import com.artivefor.me.common.util.MessageCode;
 import com.artivefor.me.data.common.Category;
+import com.artivefor.me.data.common.CategoryType;
 import com.artivefor.me.data.content.Article;
 import com.artivefor.me.data.content.ContentType;
 import com.artivefor.me.dto.common.ApiResponse;
@@ -14,6 +15,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/admin")
@@ -45,6 +48,18 @@ public class AdminArticleController {
 
         Article saved = articleRepository.save(article);
         return ApiResponse.success(saved.getId(), MessageCode.SUCCESS);
+    }
+
+    @GetMapping("/{resource}/categories")
+    public ApiResponse<List<Category>> getCategories(@PathVariable String resource) {
+        // 1. URL의 resource(insights/logs)를 CategoryType(INSIGHT/LOG)으로 변환
+        // substring 로직을 그대로 쓰거나, 명시적으로 매핑
+        CategoryType type = CategoryType.valueOf(resource.toUpperCase().substring(0, resource.length() - 1));
+
+        // 2. 레포지토리에서 해당 타입의 카테고리만 순서대로 가져옴
+        List<Category> categories = categoryRepository.findAllByTypeOrderByDisplayOrderAsc(type);
+
+        return ApiResponse.success(categories, MessageCode.SUCCESS);
     }
 
     // === 통합 조회 로직 ===
