@@ -37,9 +37,12 @@ public class SecurityConfig {
                                 "/api/v1/auth/**",
                                 "/swagger-ui/**",
                                 "/v3/api-docs/**",
-                                "/api/v1/images/**"
+                                "/api/v1/images/**",
+                                "/api/v1/admin/insight/**", // insight 관련 모든 경로
+                                "/api/v1/admin/log/**",     // log 관련 모든 경로
+                                "/api/v1/admin/**"
+
                         ).permitAll()
-                        .requestMatchers("/api/v1/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider),
