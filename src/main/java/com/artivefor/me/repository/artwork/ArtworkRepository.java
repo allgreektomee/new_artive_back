@@ -3,6 +3,7 @@ package com.artivefor.me.repository.artwork;
 import com.artivefor.me.data.artwork.Artwork;
 import com.artivefor.me.data.common.Visibility;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -27,4 +28,5 @@ public interface ArtworkRepository extends JpaRepository<Artwork, Long> {
     Page<Artwork> searchByKoreanTitle(@Param("keyword") String keyword, Pageable pageable);
 
 
+    Page<Artwork> findAllByOrderByCreatedAtDesc(PageRequest pageRequest);
 }

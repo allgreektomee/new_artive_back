@@ -16,6 +16,7 @@ import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -93,15 +94,20 @@ public class ArtworkService {
                 .build();
     }
 
-    public Page<ArtworkListResponse> getMyArtworks(Long userId, int page) {
-        ArtiveUser author = entityManager.getReference(ArtiveUser.class, userId);
-        // 하드코딩된 10 대신 상수를 사용
-        PageRequest pageRequest = PageRequest.of(page, ArtworkConstants.PAGE_SIZE);
+    @Transactional(readOnly = true)
+    public Page<ArtworkListResponse> getAllArtworks( int page) { // 파라미터는 유지하되 로직은 전체조회로!
+        PageRequest pageRequest = PageRequest.of(page, ArtworkConstants.PAGE_SIZE, Sort.by("createdAt").descending());
 
-        Page<Artwork> artworkPage = artworkRepository.findByAuthorIdOrderByCreatedAtDesc(userId, pageRequest);
+        // 🚀 유저 구분 없이 DB의 모든 작품을 최신순으로 가져옵니다.
+        Page<Artwork> artworkPage = artworkRepository.findAll(pageRequest);
 
         return artworkPage.map(artwork -> {
+            // 한국어(KO) 우선, 없으면 다른 언어라도!
             ArtworkTranslation translation = artwork.getTranslations().get(LanguageCode.KO);
+            if (translation == null && !artwork.getTranslations().isEmpty()) {
+                translation = artwork.getTranslations().values().iterator().next();
+            }
+
             String title = (translation != null) ? translation.getTitle() : "Untitled";
 
             return ArtworkListResponse.builder()
