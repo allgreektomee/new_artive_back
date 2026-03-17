@@ -75,13 +75,7 @@ public class ArtworkController {
         return ApiResponse.success(MessageCode.SUCCESS);
     }
 
-    @GetMapping
-    public ApiResponse<Page<ArtworkListResponse>> getMyArtworks(
-            @AuthenticationPrincipal ArtiveUser user,
-            @RequestParam(defaultValue = ArtworkConstants.DEFAULT_PAGE_NUMBER) int page
-    ) {
-        return ApiResponse.success(artworkService.getMyArtworks(user.getId(), page), MessageCode.SUCCESS);
-    }
+
 
 
     // --- [히스토리 관련] ---
