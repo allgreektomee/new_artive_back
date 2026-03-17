@@ -31,33 +31,30 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        // 1순위: OPTIONS(CORS)는 무조건 통과
+                        // 1. OPTIONS 요청(Preflight)은 무조건 1순위
                         .requestMatchers(org.springframework.http.HttpMethod.OPTIONS, "/**").permitAll()
-                        .requestMatchers("/error").permitAll()
-                        // 2순위: API 문서 및 스웨거 (외부에서 명세를 봐야 하므로 필수!)
+
+                        // 2. [변경] articles 관련 경로를 가장 명시적으로 분리
+                        // 쿼리 파라미터가 붙는 경우를 대비해 기본 경로와 와일드카드를 모두 명시합니다.
+                        .requestMatchers("/api/v1/articles").permitAll()
+                        .requestMatchers("/api/v1/articles/**").permitAll()
+
+                        // 3. 나머지 공개 API
                         .requestMatchers(
-                                "/v3/api-docs/**",
-                                "/v3/api-docs",
+                                "/api/v1/artworks/**",
+                                "/api/v1/auth/**",
+                                "/api/v1/images/**",
+                                "/api/v1/config/**",
                                 "/swagger-ui/**",
-                                "/swagger-ui.html"
+                                "/v3/api-docs/**",
+                                "/api/hello"
                         ).permitAll()
 
-                        // 3순위: [핵심] 작품 및 아티클 조회 GET API 완전 개방
-                        // URL 뒤에 쿼리 스트링(?page=0)이 붙어도 통과되도록 /** 를 붙입니다.
-                        .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/v1/artworks/**").permitAll()
-                        .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/v1/artworks").permitAll()
+                        // 4. 관리자 API (필요시)
+                        .requestMatchers("/api/v1/admin/**").permitAll()
 
-                        .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/v1/articles/**").permitAll()
-                        .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/v1/articles").permitAll()
-
-                        // 4순위: 기타 이미지 및 설정 정보
-                        .requestMatchers("/api/v1/images/**", "/api/v1/config/**", "/api/v1/auth/**").permitAll()
-
-                        // 5순위: 관리자용 수정/등록/삭제(POST, PUT, DELETE)는 인증 필수!
-                        // 이 구문이 있어야 '목록 볼 때 PUT이 날아가는 상황'에서 시큐리티가 403으로 막아줍니다.
                         .anyRequest().authenticated()
                 )
-                .anonymous(anonymous -> anonymous.principal("anonymousUser"))
                 .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider),
                         UsernamePasswordAuthenticationFilter.class);
 
