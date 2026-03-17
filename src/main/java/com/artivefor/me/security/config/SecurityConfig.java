@@ -46,6 +46,7 @@ public class SecurityConfig {
                         // URL 뒤에 쿼리 스트링(?page=0)이 붙어도 통과되도록 /** 를 붙입니다.
                         .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/v1/artworks/**").permitAll()
                         .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/v1/artworks").permitAll()
+
                         .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/v1/articles/**").permitAll()
                         .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/v1/articles").permitAll()
 
@@ -56,6 +57,7 @@ public class SecurityConfig {
                         // 이 구문이 있어야 '목록 볼 때 PUT이 날아가는 상황'에서 시큐리티가 403으로 막아줍니다.
                         .anyRequest().authenticated()
                 )
+                .anonymous(anonymous -> anonymous.principal("anonymousUser"))
                 .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider),
                         UsernamePasswordAuthenticationFilter.class);
 

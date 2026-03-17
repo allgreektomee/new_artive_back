@@ -28,7 +28,17 @@ public class ArtworkController {
 
 
     // --- [작품 본체 관련] ---
+    @GetMapping
+    public ApiResponse<Page<ArtworkListResponse>> getArtworks(
+            @AuthenticationPrincipal ArtiveUser user,
+            @RequestParam(defaultValue = ArtworkConstants.DEFAULT_PAGE_NUMBER) int page
+    ) {
+        // 1. 로그인 정보가 있으면 내 작품을, 없으면 전체 공개 작품을 가져옵니다.
+        // (Service 단에서 userId가 null일 때의 처리가 필요합니다)
+        Long userId = (user != null) ? user.getId() : null;
 
+        return ApiResponse.success(artworkService.getMyArtworks(userId, page), MessageCode.SUCCESS);
+    }
     @PostMapping
     public ApiResponse<Long> createArtwork(
             @AuthenticationPrincipal ArtiveUser user,
