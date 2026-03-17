@@ -33,7 +33,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         // 1순위: OPTIONS(CORS)는 무조건 통과
                         .requestMatchers(org.springframework.http.HttpMethod.OPTIONS, "/**").permitAll()
-
+                        .requestMatchers("/error").permitAll()
                         // 2순위: API 문서 및 스웨거 (외부에서 명세를 봐야 하므로 필수!)
                         .requestMatchers(
                                 "/v3/api-docs/**",
