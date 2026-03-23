@@ -3,8 +3,8 @@ package com.artivefor.me.dto.content;
 import lombok.*;
 
 /**
- * ÀÎ»çÀÌÆ®(Insight)¿Í ·Î±×(Log) ÅëÇÕ °ü¸®¸¦ À§ÇÑ DTO
- * ÄÁÆ®·Ñ·¯ÀÇ createArticle, updateArticle ¸Ş¼­µå¿¡¼­ @RequestBody·Î »ç¿ëµË´Ï´Ù.
+ * ì¸ì‚¬ì´íŠ¸(Insight) ë° ë¡œê·¸(Log) ê¸°ì‚¬ ìƒì„±ì„ ìœ„í•œ DTO
+ * ì»¨íŠ¸ë¡¤ëŸ¬ì˜ createArticle, updateArticle ë©”ì„œë“œì—ì„œ @RequestBodyë¡œ ì‚¬ìš©ë©ë‹ˆë‹¤.
  */
 @Data
 @Builder
@@ -14,19 +14,19 @@ import lombok.*;
 @Setter
 public class ArticleDto {
 
-    // 1. Ä«Å×°í¸® ¿¬°á (ÄÁÆ®·Ñ·¯¿¡¼­ categoryRepository.findById(request.categoryId)·Î »ç¿ë)
+    // 1. ì¹´í…Œê³ ë¦¬ ì‹ë³„ì (ì»¨íŠ¸ë¡¤ëŸ¬ì—ì„œ categoryRepository.findById(request.categoryId)ë¡œ ì‚¬ìš©)
     private Long categoryId;
 
-    // 2. Á¦¸ñ (±¹¹®/¿µ¹®)
+    // 2. ì œëª© (êµ­ë¬¸/ì˜ë¬¸)
     private String koTitle;
     private String enTitle;
 
-    // 3. ³»¿ë ¿ä¾à ¹× º»¹® ¿¬°á
-    private String summary;      // ¸ñ·Ï¿¡ ³ëÃâµÇ´Â ÂªÀº ¼³¸í
-    private String externalUrl;  // ¿öµåÇÁ·¹½º µî ¿ÜºÎ ÄÜÅÙÃ÷ ¸µÅ©
-    private String thumbnailUrl; // S3 ÀÌ¹ÌÁö ÁÖ¼Ò
+    // 3. ëª©ë¡ìš© ì •ë³´ ë° ì—°ê²° ë§í¬
+    private String summary;      // ëª©ë¡ì— ë…¸ì¶œë˜ëŠ” ì§§ì€ ì„¤ëª…
+    private String externalUrl;  // ìƒì„¸í˜ì´ì§€ë¡œ ê°ˆ ì™¸ë¶€ í˜ì´ì§€ ë§í¬
+    private String thumbnailUrl; // S3 ì´ë¯¸ì§€ ì£¼ì†Œ
 
-    // 4. »óÅÂ °ü¸® (ÇÊ¿ä ½Ã Ãß°¡)
+    // 4. ê³µê°œ ì—¬ë¶€ (ê¸°ë³¸ê°’ true)
     @Builder.Default
     private Boolean isPublic = true;
 }
