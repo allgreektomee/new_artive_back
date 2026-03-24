@@ -5,7 +5,7 @@ import lombok.Setter;
 import java.util.List;
 
 @Getter @Setter
-public class IndexPageRequestDto {
+public class IndexPageRequestDTO {
     // 상단 및 전체 설정
     private String issueNo;
     private String backgroundColor;

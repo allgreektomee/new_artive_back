@@ -1,3 +1,17 @@
+package com.artivefor.me.service.index;
+
+
+import com.artivefor.me.data.index.IndexItem;
+import com.artivefor.me.data.index.IndexPage;
+import com.artivefor.me.dto.index.IndexPageRequestDTO;
+import com.artivefor.me.dto.index.IndexPageResponseDTO;
+import com.artivefor.me.repository.IndexPageRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.stream.Collectors;
+
 @Service
 @RequiredArgsConstructor
 public class IndexPageService {
@@ -6,12 +20,12 @@ public class IndexPageService {
 
     // 조회: Entity -> ResponseDto 변환
     @Transactional(readOnly = true)
-    public IndexPageResponseDto getLatestIndexPage() {
-        IndexPage indexPage = indexPageRepository.findTopByOrderByIdDesc()
+    public IndexPageResponseDTO getLatestIndexPage() {
+       IndexPage indexPage = indexPageRepository.findTopByOrderByIdDesc()
                 .orElseThrow(() -> new RuntimeException("등록된 인덱스 페이지가 없습니다."));
 
-        return IndexPageResponseDto.builder()
-                .header(IndexPageResponseDto.HeaderDto.builder()
+        return IndexPageResponseDTO.builder()
+                .header(IndexPageResponseDTO.HeaderDto.builder()
                         .issueNo(indexPage.getIssueNo())
                         .bgColor(indexPage.getBackgroundColor())
                         .titleTag(indexPage.getTitleTag())
@@ -21,7 +35,7 @@ public class IndexPageService {
                         .description(indexPage.getDescription())
                         .descriptionColor(indexPage.getDescriptionColor())
                         .build())
-                .config(IndexPageResponseDto.ContentsConfigDto.builder()
+                .config(IndexPageResponseDTO.ContentsConfigDto.builder()
                         .tag(indexPage.getContentsTag())
                         .tagColor(indexPage.getContentsTagColor())
                         .noColor(indexPage.getContentsNoColor())
@@ -29,7 +43,7 @@ public class IndexPageService {
                         .subColor(indexPage.getContentsSubColor())
                         .build())
                 .items(indexPage.getItems().stream()
-                        .map(item -> IndexPageResponseDto.ItemDto.builder()
+                        .map(item -> IndexPageResponseDTO.ItemDto.builder()
                                 .no(item.getNo())
                                 .subject(item.getSubject())
                                 .subSubject(item.getSubSubject())
@@ -41,7 +55,7 @@ public class IndexPageService {
 
     // 저장: RequestDto -> Entity 변환
     @Transactional
-    public Long saveIndexPage(IndexPageRequestDto dto) {
+    public Long saveIndexPage(IndexPageRequestDTO dto) {
         IndexPage indexPage = new IndexPage();
         // ... 필드 매핑 로직 (빌더나 Setter 활용)
 

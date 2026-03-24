@@ -30,18 +30,18 @@ public class Article extends BaseTimeEntity {
     private String enTitle;
 
     @Column(columnDefinition = "TEXT")
-    private String summary; // ¿ä¾à¹®
+    private String summary; // ìš”ì•½ë¬¸
 
     @Column(columnDefinition = "TEXT")
-    private String contents; // º»¹® (Á÷Á¢ ÀÛ¼º ½Ã)
+    private String contents; // ë³¸ë¬¸ (ì§ì ‘ ì‘ì„± ì‹œ)
 
-    private String externalUrl; // ¿öµåÇÁ·¹½º ¸µÅ©
-    private String thumbnailUrl; // ½æ³×ÀÏ ÀÌ¹ÌÁö
+    private String externalUrl; // ì›Œë“œí”„ë ˆìŠ¤ ë§í¬
+    private String thumbnailUrl; // ì¸ë„¤ì¼ ì´ë¯¸ì§€
 
     @Builder.Default
     private boolean isPublic = true;
 
-    // ¼öÁ¤ ÆíÀÇ ¸Ş¼­µå
+    // ìˆ˜ì • í¸ì˜ ë©”ì„œë“œ
     public void update(Category category, String koTitle, String enTitle, String summary, String externalUrl, String thumbnailUrl) {
         this.category = category;
         this.koTitle = koTitle;

@@ -6,7 +6,7 @@ import java.util.List;
 
 @Getter
 @Builder
-public class IndexPageResponseDto {
+public class IndexPageResponseDTO {
     private HeaderDto header;           // 상단 디자인 & 워딩
     private ContentsConfigDto config;   // 목차 공통 디자인 설정
     private List<ItemDto> items;        // 실제 목차 리스트
