@@ -1,4 +1,4 @@
-package com.artivefor.me.repository;
+package com.artivefor.me.repository.index;
 
 import com.artivefor.me.data.index.IndexPage;
 import org.springframework.data.jpa.repository.JpaRepository;
