@@ -5,7 +5,7 @@ import com.artivefor.me.data.index.IndexItem;
 import com.artivefor.me.data.index.IndexPage;
 import com.artivefor.me.dto.index.IndexPageRequestDTO;
 import com.artivefor.me.dto.index.IndexPageResponseDTO;
-import com.artivefor.me.repository.IndexPageRepository;
+import com.artivefor.me.repository.index.IndexPageRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
