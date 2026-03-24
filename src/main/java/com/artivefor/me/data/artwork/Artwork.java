@@ -41,6 +41,7 @@ public class Artwork extends BaseTimeEntity {
     )
     @Column(name = "image_url")
     @OrderColumn(name = "list_order") // 🚀 중요: 드래그 앤 드롭 순서 저장
+    @Builder.Default
     private List<String> images = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)

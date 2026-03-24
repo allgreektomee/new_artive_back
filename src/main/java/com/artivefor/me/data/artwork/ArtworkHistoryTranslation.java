@@ -18,5 +18,6 @@ public class ArtworkHistoryTranslation {
     @Column(columnDefinition = "TEXT")
     private String content; // 히스토리 상세 내용 (작업 일지)
 
+    @Builder.Default
     private boolean isAutomated = false; // 자동 번역 여부
 }
