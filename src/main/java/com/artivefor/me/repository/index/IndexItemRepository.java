@@ -1,6 +1,6 @@
-package com.artivefor.me.repository;
+package com.artivefor.me.repository.index;
 
-import com.artivefor.me.entity.index.IndexItem;
+import com.artivefor.me.data.index.IndexItem;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import java.util.List;
