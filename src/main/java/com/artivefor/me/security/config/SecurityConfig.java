@@ -38,7 +38,8 @@ public class SecurityConfig {
                         // 쿼리 파라미터가 붙는 경우를 대비해 기본 경로와 와일드카드를 모두 명시합니다.
                         .requestMatchers("/api/v1/articles").permitAll()
                         .requestMatchers("/api/v1/articles/**").permitAll()
-
+                        .requestMatchers("/api/v1/index").permitAll()
+                        .requestMatchers("/api/v1/index/**").permitAll()
                         // 3. 나머지 공개 API
                         .requestMatchers(
                                 "/api/v1/artworks/**",
