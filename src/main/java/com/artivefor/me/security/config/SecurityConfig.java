@@ -39,7 +39,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/v1/articles").permitAll()
                         .requestMatchers("/api/v1/articles/**").permitAll()
                         .requestMatchers("/api/v1/index").permitAll()
-                        .requestMatchers("/api/v1/index/**").permitAll()
+//                        .requestMatchers("/api/v1/index/**").permitAll()
                         // 3. 나머지 공개 API
                         .requestMatchers(
                                 "/api/v1/artworks/**",
