@@ -1,7 +1,6 @@
 package com.artivefor.me.security.config;
 
 import com.artivefor.me.security.jwt.JwtAuthenticationFilter;
-import com.artivefor.me.security.jwt.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -15,14 +14,13 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.Arrays;
-import java.util.List;
 
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    private final JwtTokenProvider jwtTokenProvider;
+    private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -48,7 +46,8 @@ public class SecurityConfig {
                                 "/api/v1/config/**",
                                 "/swagger-ui/**",
                                 "/v3/api-docs/**",
-                                "/api/hello"
+                                "/api/hello",
+                                "/ws/**"
                         ).permitAll()
 
                         // 4. 관리자 API (필요시)
@@ -56,7 +55,7 @@ public class SecurityConfig {
 
                         .anyRequest().authenticated()
                 )
-                .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider),
+                .addFilterBefore(jwtAuthenticationFilter,
                         UsernamePasswordAuthenticationFilter.class);
 
         return http.build();

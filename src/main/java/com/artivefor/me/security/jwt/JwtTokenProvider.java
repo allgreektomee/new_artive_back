@@ -40,10 +40,10 @@ public class JwtTokenProvider {
         this.key = Keys.hmacShaKeyFor(encodedKey.getBytes());
     }
 
-    // 1. 토큰 생성
-    public String createToken(String email, String role) {
+    public String createToken(String email, String role, long loginGeneration) {
         Claims claims = Jwts.claims().setSubject(email);
-        claims.put("role", role); // 토큰에 유저 권한 정보 포함
+        claims.put("role", role);
+        claims.put("lg", loginGeneration);
 
         Date now = new Date();
         Date validity = new Date(now.getTime() + validityInMilliseconds);
@@ -54,6 +54,17 @@ public class JwtTokenProvider {
                 .setExpiration(validity)
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
+    }
+
+    /** JWT lg 클레임; 없으면 0 (구버전 토큰). */
+    public long getLoginGeneration(String token) {
+        Claims claims = Jwts.parserBuilder().setSigningKey(key).build()
+                .parseClaimsJws(token).getBody();
+        Object lg = claims.get("lg");
+        if (lg instanceof Number n) {
+            return n.longValue();
+        }
+        return 0L;
     }
 
     // 2. 토큰에서 유저 이메일 추출

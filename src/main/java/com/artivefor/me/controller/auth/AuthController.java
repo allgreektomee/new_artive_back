@@ -5,6 +5,7 @@ import com.artivefor.me.data.user.ArtiveUser;
 import com.artivefor.me.dto.auth.AuthRequest;
 import com.artivefor.me.dto.auth.TokenResponse;
 import com.artivefor.me.dto.common.ApiResponse;
+import com.artivefor.me.realtime.LoginSessionService;
 import com.artivefor.me.security.jwt.JwtTokenProvider;
 import com.artivefor.me.service.auth.AuthService;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +21,7 @@ public class AuthController {
 
     private final AuthService authService;
     private final JwtTokenProvider jwtTokenProvider;
+    private final LoginSessionService loginSessionService;
 
     // 1. 회원가입 (추가됨)
     @PostMapping("/signup")
@@ -47,7 +49,8 @@ public class AuthController {
     @PostMapping("/login")
     public ApiResponse<TokenResponse> login(@RequestBody AuthRequest.Login request) {
         ArtiveUser user = authService.login(request.getEmail(), request.getPassword());
-        String accessToken = jwtTokenProvider.createToken(user.getEmail(), user.getRole().name());
+        long loginGeneration = loginSessionService.bumpGenerationOnLogin(user.getEmail());
+        String accessToken = jwtTokenProvider.createToken(user.getEmail(), user.getRole().name(), loginGeneration);
 
         return ApiResponse.success(new TokenResponse(accessToken), MessageCode.AUTH_LOGIN_SUCCESS);
     }
