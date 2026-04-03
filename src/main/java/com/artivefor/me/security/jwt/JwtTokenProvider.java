@@ -40,10 +40,12 @@ public class JwtTokenProvider {
         this.key = Keys.hmacShaKeyFor(encodedKey.getBytes());
     }
 
-    public String createToken(String email, String role, long loginGeneration) {
+    public static final String CLAIM_TEST_SESSION_ID = "testSessionId";
+
+    public String createToken(String email, String role, long testSessionId) {
         Claims claims = Jwts.claims().setSubject(email);
         claims.put("role", role);
-        claims.put("lg", loginGeneration);
+        claims.put(CLAIM_TEST_SESSION_ID, testSessionId);
 
         Date now = new Date();
         Date validity = new Date(now.getTime() + validityInMilliseconds);
@@ -56,18 +58,25 @@ public class JwtTokenProvider {
                 .compact();
     }
 
-    /** JWT lg 클레임; 없으면 0 (구버전 토큰). */
-    public long getLoginGeneration(String token) {
+    /**
+     * JWT {@code testSessionId} 클레임. 없거나 타입 불일치 시 0.
+     * 예전 배포의 {@code lg} 클레임만 있는 토큰은 당분간 호환용으로 읽음.
+     */
+    public long getTestSessionId(String token) {
         Claims claims = Jwts.parserBuilder().setSigningKey(key).build()
                 .parseClaimsJws(token).getBody();
-        Object lg = claims.get("lg");
-        if (lg instanceof Number n) {
+        Object raw = claims.get(CLAIM_TEST_SESSION_ID);
+        if (raw instanceof Number n) {
+            return n.longValue();
+        }
+        Object legacy = claims.get("lg");
+        if (legacy instanceof Number n) {
             return n.longValue();
         }
         return 0L;
     }
 
-    // 2. 토큰에서 유저 이메일 추출
+    // 2. 토큰에서 로그인 계정 식별자(subject, 현재는 이메일) 추출
     public String getEmail(String token) {
         return Jwts.parserBuilder().setSigningKey(key).build()
                 .parseClaimsJws(token).getBody().getSubject();

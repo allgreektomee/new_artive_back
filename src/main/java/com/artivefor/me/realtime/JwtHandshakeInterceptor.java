@@ -16,7 +16,8 @@ import java.util.Map;
 public class JwtHandshakeInterceptor implements HandshakeInterceptor {
 
     public static final String ATTR_EMAIL = "email";
-    public static final String ATTR_LOGIN_GEN = "loginGen";
+    /** WebSocketSession attributes 키 — JWT 클레임 testSessionId 와 동일한 값(Long). */
+    public static final String ATTR_TEST_SESSION_ID = "testSessionId";
 
     private final JwtTokenProvider jwtTokenProvider;
     private final LoginSessionService loginSessionService;
@@ -33,12 +34,12 @@ public class JwtHandshakeInterceptor implements HandshakeInterceptor {
         }
         try {
             String email = jwtTokenProvider.getEmail(token);
-            long gen = jwtTokenProvider.getLoginGeneration(token);
-            if (!loginSessionService.matchesCurrentGeneration(email, gen)) {
+            long testSessionId = jwtTokenProvider.getTestSessionId(token);
+            if (!loginSessionService.matchesCurrentTestSessionId(email, testSessionId)) {
                 return false;
             }
             attributes.put(ATTR_EMAIL, email);
-            attributes.put(ATTR_LOGIN_GEN, gen);
+            attributes.put(ATTR_TEST_SESSION_ID, testSessionId);
             return true;
         } catch (Exception e) {
             return false;

@@ -49,8 +49,8 @@ public class AuthController {
     @PostMapping("/login")
     public ApiResponse<TokenResponse> login(@RequestBody AuthRequest.Login request) {
         ArtiveUser user = authService.login(request.getEmail(), request.getPassword());
-        long loginGeneration = loginSessionService.bumpGenerationOnLogin(user.getEmail());
-        String accessToken = jwtTokenProvider.createToken(user.getEmail(), user.getRole().name(), loginGeneration);
+        long testSessionId = loginSessionService.bumpTestSessionIdOnLogin(user.getEmail());
+        String accessToken = jwtTokenProvider.createToken(user.getEmail(), user.getRole().name(), testSessionId);
 
         return ApiResponse.success(new TokenResponse(accessToken), MessageCode.AUTH_LOGIN_SUCCESS);
     }

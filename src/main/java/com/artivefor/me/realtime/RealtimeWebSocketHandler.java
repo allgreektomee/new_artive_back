@@ -16,18 +16,18 @@ public class RealtimeWebSocketHandler extends TextWebSocketHandler {
     @Override
     public void afterConnectionEstablished(WebSocketSession session) {
         String email = (String) session.getAttributes().get(JwtHandshakeInterceptor.ATTR_EMAIL);
-        Object genObj = session.getAttributes().get(JwtHandshakeInterceptor.ATTR_LOGIN_GEN);
-        if (email != null && genObj instanceof Long loginGen) {
-            loginSessionService.registerSession(session, email, loginGen);
+        Object idObj = session.getAttributes().get(JwtHandshakeInterceptor.ATTR_TEST_SESSION_ID);
+        if (email != null && idObj instanceof Long testSessionId) {
+            loginSessionService.registerSession(session, email, testSessionId);
         }
     }
 
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) {
         String email = (String) session.getAttributes().get(JwtHandshakeInterceptor.ATTR_EMAIL);
-        Object genObj = session.getAttributes().get(JwtHandshakeInterceptor.ATTR_LOGIN_GEN);
-        Long loginGen = genObj instanceof Long l ? l : null;
-        loginSessionService.unregisterSession(session, email, loginGen);
+        Object idObj = session.getAttributes().get(JwtHandshakeInterceptor.ATTR_TEST_SESSION_ID);
+        Long testSessionId = idObj instanceof Long l ? l : null;
+        loginSessionService.unregisterSession(session, email, testSessionId);
     }
 
     @Override
